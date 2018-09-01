@@ -1036,7 +1036,7 @@ function iterate(compact::IncrementalCompact, (idx, active_bb)::Tuple{Int, Int}=
     bb = compact.ir.cfg.blocks[active_bb]
     if compact.allow_cfg_transforms && active_bb > 1 && active_bb <= length(compact.bb_rename) && length(bb.preds) == 0
         # No predecessors, kill the entire block.
-        compact.idx = last(bb.stmts) + 1
+        compact.idx = last(bb.stmts)
         # Pop any remaining insertion nodes
         while compact.new_nodes_idx <= length(compact.perm)
             entry = compact.ir.new_nodes[compact.perm[compact.new_nodes_idx]]
@@ -1052,6 +1052,8 @@ function iterate(compact::IncrementalCompact, (idx, active_bb)::Tuple{Int, Int}=
             end
             popfirst!(compact.pending_perm)
         end
+        # Move to next block
+        compact.idx += 1
         if finish_current_bb!(compact, active_bb, old_result_idx, true)
             return iterate(compact, (compact.idx, active_bb + 1))
         else
