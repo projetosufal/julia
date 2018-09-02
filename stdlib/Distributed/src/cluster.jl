@@ -720,6 +720,15 @@ const map_del_wrkr = Set{Int}()
     myid()
 
 Get the id of the current process.
+
+# Examples
+```julia-repl
+julia> myid()
+1
+
+julia> remotecall_fetch(() -> myid(), 4)
+4
+```
 """
 myid() = LPROC.id
 
@@ -727,6 +736,20 @@ myid() = LPROC.id
     nprocs()
 
 Get the number of available processes.
+
+# Examples
+```julia-repl
+julia> nprocs()
+6
+
+julia> workers()
+5-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+ 6
+```
 """
 function nprocs()
     if myid() == 1 || (PGRP.topology == :all_to_all && !isclusterlazy())
@@ -746,8 +769,18 @@ end
 """
     nworkers()
 
-Get the number of available worker processes. This is one less than `nprocs()`. Equal to
+Get the number of available worker processes. This is one less than [`nprocs()`](@ref). Equal to
 `nprocs()` if `nprocs() == 1`.
+
+# Examples
+Here, `julia` was launched with `-p 5`:
+```julia-repl
+julia> nprocs()
+6
+
+julia> nworkers()
+5
+```
 """
 function nworkers()
     n = nprocs()
@@ -757,7 +790,20 @@ end
 """
     procs()
 
-Return a list of all process identifiers.
+Return a list of all process identifiers, including pid 1 (which is not included by [`workers()`](@ref)).
+
+# Examples
+Here, `julia` was launched with `-p 5`:
+```julia-repl
+julia> procs()
+6-element Array{Int64,1}:
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+```
 """
 function procs()
     if myid() == 1 || (PGRP.topology == :all_to_all  && !isclusterlazy())
@@ -809,6 +855,18 @@ end
     workers()
 
 Return a list of all worker process identifiers.
+
+# Examples
+Here, `julia` was launched with `-p 5`:
+```julia-repl
+julia> workers()
+5-element Array{Int64,1}:
+ 2
+ 3
+ 4
+ 5
+ 6
+```
 """
 function workers()
     allp = procs()
@@ -832,13 +890,28 @@ Remove the specified workers. Note that only process 1 can add or remove
 workers.
 
 Argument `waitfor` specifies how long to wait for the workers to shut down:
-    - If unspecified, `rmprocs` will wait until all requested `pids` are removed.
-    - An `ErrorException` is raised if all workers cannot be terminated before
-      the requested `waitfor` seconds.
-    - With a `waitfor` value of 0, the call returns immediately with the workers
-      scheduled for removal in a different task. The scheduled `Task` object is
-      returned. The user should call `wait` on the task before invoking any other
-      parallel calls.
+  - If unspecified, `rmprocs` will wait until all requested `pids` are removed.
+  - An [`ErrorException`](@ref) is raised if all workers cannot be terminated before
+    the requested `waitfor` seconds.
+  - With a `waitfor` value of 0, the call returns immediately with the workers
+    scheduled for removal in a different task. The scheduled [`Task`](@ref) object is
+    returned. The user should call [`wait`](@ref) on the task before invoking any other
+    parallel calls.
+
+# Examples
+Here, `julia` was launched with `-p 5`:
+```julia-repl
+julia> t = rmprocs(2, 3, waitfor=0)
+Task (runnable) @0x0000000107c718d0
+
+julia> wait(t)
+
+julia> workers()
+3-element Array{Int64,1}:
+ 4
+ 5
+ 6
+```
 """
 function rmprocs(pids...; waitfor=typemax(Int))
     cluster_mgmt_from_master_check()
