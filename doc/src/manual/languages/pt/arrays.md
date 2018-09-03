@@ -1,4 +1,4 @@
-# [Multi-dimensional Arrays](@id man-multi-dim-arrays)
+# [Arrays Multi-dimensionais](@id man-multi-dim-arrays)
 
 Julia, como a maioria das linguagens de computação técnica, oferece uma excelente implementação de arrays. A maioria
 destas linguagens dão muita atenção à sua implementação de array em detrimento de
