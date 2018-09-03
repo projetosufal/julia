@@ -1,50 +1,51 @@
 # [Multi-dimensional Arrays](@id man-multi-dim-arrays)
 
-Julia, like most technical computing languages, provides a first-class array implementation. Most
-technical computing languages pay a lot of attention to their array implementation at the expense
-of other containers. Julia does not treat arrays in any special way. The array library is implemented
-almost completely in Julia itself, and derives its performance from the compiler, just like any
-other code written in Julia. As such, it's also possible to define custom array types by inheriting
-from [`AbstractArray`](@ref). See the [manual section on the AbstractArray interface](@ref man-interface-array) for more details
-on implementing a custom array type.
+Julia, como a maioria das linguagens de computação técnica, oferece uma excelente implementação de arrays. A maioria
+destas linguagens dão muita atenção à sua implementação de array em detrimento de
+outros containers. Julia não trata arrays de uma maneira especial. A biblioteca de array é implementada
+quase completamente na própria linguagem Julia, e deriva seu desempenho pelo compilador, assim como qualquer
+outro código escrito em Julia. Como tal, também é possível definir tipos diferentes de array herdando características do
+[`AbstractArray`](@ref). Veja a [secção do manual para a interface AbstractArray](@ref man-interface-array) para mais detalhes
+sobre a implementação de um outros tipos de array.
 
-An array is a collection of objects stored in a multi-dimensional grid. In the most general case,
-an array may contain objects of type `Any`. For most computational purposes, arrays should contain
-objects of a more specific type, such as [`Float64`](@ref) or [`Int32`](@ref).
+Um array é uma coleção de objetos guardados em uma grade multi-dimensional. No caso mais geral,
+um array pode conter objetos do tipo `Any`. Para a maioria dos interesses computacionais, arrays devem conter
+objetos de um tipo mais específico, como, por exemplo, [`Float64`](@ref) ou [`Int32`](@ref).
 
-In general, unlike many other technical computing languages, Julia does not expect programs to
-be written in a vectorized style for performance. Julia's compiler uses type inference and generates
-optimized code for scalar array indexing, allowing programs to be written in a style that is convenient
-and readable, without sacrificing performance, and using less memory at times.
+No geral, diferentemente de outras linguagens de computação técnica, Julia não espera que os programas
+sejam escritos de uma forma vetorizada para performance. O compilador de Julia usa inferência de tipo e gera
+código otimizado para o endereçamento de arrays escalares, permitindo que os programas sejam escritos da forma que seja masi conveniente
+e legível, sem sacrificar performance, e, por vezes, usando menos memória.
 
-In Julia, all arguments to functions are [passed by
-sharing](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
-(i.e. by pointers). Some technical computing languages pass arrays by value, and
-while this prevents accidental modification by callees of a value in the caller,
-it makes avoiding unwanted copying of arrays difficult. By convention, a
-function name ending with a `!` indicates that it will mutate or destroy the
-value of one or more of its arguments (see, for example, [`sort`](@ref) and [`sort!`](@ref).
-Callees must make explicit copies to ensure that they don't modify inputs that
-they don't intend to change. Many non- mutating functions are implemented by
-calling a function of the same name with an added `!` at the end on an explicit
-copy of the input, and returning that copy.
+Em Julia, todos os argumentos de funções são [passados por
+compartilhamento](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
+(Ex.: por ponteiros). Algumas linguagens de computação técnica passam arrays por valor, e
+enquanto isso previne a modificação acidental pelas funções de um valor passado,
+isso torna a prevenção de cópias não permitidas de arrays mais difícil. Por convenção, um
+nome de função que termina com `!` indica que ela vai modificar ou eliminar o
+valor de um ou mais dos seus argumentos (veja, por exemplo, [`sort`](@ref) e [`sort!`](@ref).
+As funções chamadas devem fazer cópias explicitas do que receberam como argumento para garantir que não modifiquem as entradas 
+sem que esta seja a intenção. Muitas funções não-mutantes são implementadas com chamadas para 
+uma função com o mesmo nome, mas que possuem um `!` no fim passando uma cópia explicita
+do input, e retornando esta cópia.
 
-## Basic Functions
+
+## Funções Básicas
 
 | Function               | Description                                                                      |
 |:---------------------- |:-------------------------------------------------------------------------------- |
-| [`eltype(A)`](@ref)    | the type of the elements contained in `A`                                        |
-| [`length(A)`](@ref)    | the number of elements in `A`                                                    |
-| [`ndims(A)`](@ref)     | the number of dimensions of `A`                                                  |
-| [`size(A)`](@ref)      | a tuple containing the dimensions of `A`                                         |
-| [`size(A,n)`](@ref)    | the size of `A` along dimension `n`                                              |
-| [`axes(A)`](@ref)   | a tuple containing the valid indices of `A`                                      |
-| [`axes(A,n)`](@ref) | a range expressing the valid indices along dimension `n`                         |
-| [`eachindex(A)`](@ref) | an efficient iterator for visiting each position in `A`                          |
-| [`stride(A,k)`](@ref)  | the stride (linear index distance between adjacent elements) along dimension `k` |
-| [`strides(A)`](@ref)   | a tuple of the strides in each dimension                                         |
+| [`eltype(A)`](@ref)    | o tipo dos elementos contidos em `A`                                             |
+| [`length(A)`](@ref)    | o número de elementos em `A`                                                     |
+| [`ndims(A)`](@ref)     | o número de dimensões de `A`                                                     |
+| [`size(A)`](@ref)      | uma tupla contendo as dimensões de `A`                                           |
+| [`size(A,n)`](@ref)    | o tamanho de `A` junto da dimensão `n`                                           |
+| [`axes(A)`](@ref)      | uma tupla contendo os indices válidos de `A`                                     |
+| [`axes(A,n)`](@ref)    | a range expressing the valid indices along dimension `n`                         |
+| [`eachindex(A)`](@ref) | um iterador eficiente para visitar cada posição em `A`                           |
+| [`stride(A,k)`](@ref)  | o desvio (distância do índice linear entre elementos adjacentes) junto da dimensão `k` |
+| [`strides(A)`](@ref)   | a tupla dos desvios em cada dimensão                                             |
 
-## Construction and Initialization
+## Construção e Inicialização
 
 Many functions for constructing and initializing arrays are provided. In the following list of
 such functions, calls with a `dims...` argument can either take a single tuple of dimension sizes
